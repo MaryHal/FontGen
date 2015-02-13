@@ -30,7 +30,7 @@ class Font
         static const std::vector<PackRange> jp;
 
     public:
-        Font(const std::string& filename, std::vector<PackRange> charRanges);
+        Font(const std::string& filename, const std::vector<PackRange>& charRanges);
         ~Font();
 
         // Copying
@@ -47,7 +47,7 @@ class Font
         void writeBitmap(const std::string& filename);
 
     private:
-        void loadFont(const std::string& filename, std::vector<PackRange> charRanges);
+        void loadFont(const std::string& filename, const std::vector<PackRange>& charRanges);
 
         // void draw(float x, float y, const std::string& text) const;
 };

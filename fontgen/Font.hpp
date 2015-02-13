@@ -26,6 +26,7 @@ class Font
         std::vector<uint8_t> bitmap;
 
     public:
+        // Static character sets
         static const std::vector<PackRange> jp;
 
     public:

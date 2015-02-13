@@ -9,8 +9,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
-#include <iostream>
-
 const std::vector<Font::PackRange> Font::jp
 {
     { 20.0f, 32, 95 },
@@ -98,15 +96,12 @@ void Font::loadFont(const std::string& filename, std::vector<PackRange> charRang
 
     pdata.reserve(totalChars);
 
-    totalChars = 0;
+    int runningTotal{};
     for (auto& range : charRanges)
     {
-        stbtt_pack_range pr{range.fontsize, range.first_unicode_char, range.num_chars, &pdata[totalChars]};
-        pranges.push_back(pr);
-
-        totalChars += range.num_chars;
+        pranges.push_back({range.fontsize, range.first_unicode_char, range.num_chars, &pdata[runningTotal]});
+        runningTotal += range.num_chars;
     }
-    std::cout << pranges.size() << std::endl << pdata.capacity() << std::endl;
 
     stbtt_PackSetOversampling(&pc, 2, 2);
     stbtt_PackFontRanges(&pc, ttf_buffer, 0, &pranges[0], pranges.size());

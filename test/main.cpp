@@ -8,17 +8,16 @@
 int main(int argc, char *argv[])
 {
     (void)argc, (void)argv;
-    
+
     Font font1{"DroidSansFallback.ttf", Font::jp};
-    
+    font1.writeBitmap("DroidSans01.png");
+
     Font font2{"DroidSansFallback.ttf",
         {
             { 16.0f, 32, 95 }, // ASCII
             { 60.0f, 0x3260, 0x327B - 0x3260 } // Circled Hangul???
         }
     };
-
-    font1.writeBitmap("DroidSans01.png");
     font2.writeBitmap("DroidSans02.png");
 
     // const auto& pdata = font.getpdata();

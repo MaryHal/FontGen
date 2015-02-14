@@ -1,12 +1,14 @@
 #ifndef _Font_hpp_
 #define _Font_hpp_
 
-#include <stb_truetype.h>
-
 #include <string>
 #include <vector>
 
 #include <stdint.h>
+
+// Get away with forward declaring the C struct.
+struct _stbtt_packedchar;
+typedef _stbtt_packedchar stbtt_packedchar;
 
 class Font
 {
@@ -40,9 +42,6 @@ class Font
         // Moving
         Font(Font&& that);
         Font& operator=(Font&& that);
-
-        stbtt_aligned_quad getQuad(int& charIndex, float& x, float& y);
-        const std::vector<stbtt_packedchar>& getpdata() const;
 
         void writeBitmap(const std::string& filename);
 

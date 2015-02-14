@@ -25,8 +25,7 @@ int main(int argc, char *argv[])
     {
         Font font2{fontFile,
             {
-                { 27.0f, 32, 95 }, // ASCII
-                { 54.0f, 0x1100, 0x1112 - 0x1100 } // Circled Hangul???
+                { 27.0f, 32, 95 } // ASCII
             }
         };
         font2.writeBitmap("font02.png");

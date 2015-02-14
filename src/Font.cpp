@@ -56,21 +56,18 @@ Font& Font::operator=(Font&& that)
     return *this;
 }
 
-stbtt_aligned_quad Font::getQuad(int& charIndex, float& x, float& y)
-{
-    stbtt_aligned_quad q;
-    stbtt_GetPackedQuad(&pdata[0], BITMAP_W, BITMAP_H,
-                        charIndex - 32,
-                        &x, &y, &q,
-                        1); //1=opengl & d3d10+,0=d3d9
+// stbtt_aligned_quad Font::getQuad(int& charIndex, float& x, float& y)
+// {
+//     stbtt_GetPackedQuad(&pdata[0], BITMAP_W, BITMAP_H,
+//                         charIndex - 32,
+//                         &x, &y, &q,
+//                         1); //1=opengl & d3d10+,0=d3d9
+// }
 
-    return q;
-}
-
-const std::vector<stbtt_packedchar>& Font::getpdata() const
-{
-    return pdata;
-}
+// const std::vector<stbtt_packedchar>& Font::getpdata() const
+// {
+//     return pdata;
+// }
 
 void Font::writeBitmap(const std::string& filename)
 {

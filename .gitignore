@@ -33,3 +33,6 @@ obj/
 /bin/*.ttc
 /bin/*.ttf
 /bin/FontTest
+/example/glfonttest
+/example/.ninja_deps
+/example/.ninja_log

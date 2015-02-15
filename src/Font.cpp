@@ -47,6 +47,7 @@ namespace fgen
 
     Font& Font::operator=(Font that)
     {
+        std::swap(ranges, that.ranges);
         std::swap(pdata, that.pdata);
         std::swap(bitmap, that.bitmap);
         return *this;

@@ -23,17 +23,17 @@ namespace fgen
 
     Font::Font(const std::string& filename,
                const std::vector<PackRange>& charRanges)
-        : pdata{}, bitmap{}
-    {
-        loadFont(filename, charRanges);
-    }
+        : ranges{}, pdata{}, bitmap{}
+        {
+            loadFont(filename, charRanges);
+        }
 
     Font::Font(const uint8_t fontData[], unsigned int dataLength,
                const std::vector<PackRange>& charRanges)
-        : pdata{}, bitmap{}
-    {
-        loadFont(fontData, dataLength, charRanges);
-    }
+        : ranges{}, pdata{}, bitmap{}
+            {
+                loadFont(fontData, dataLength, charRanges);
+            }
 
     Font::~Font()
     {
@@ -42,8 +42,8 @@ namespace fgen
     Font::Font(const Font& that)
         : pdata{that.pdata},
           bitmap{that.bitmap}
-    {
-    }
+                {
+                }
 
     Font& Font::operator=(Font that)
     {
@@ -55,8 +55,8 @@ namespace fgen
     Font::Font(Font&& that)
         : pdata{that.pdata},
           bitmap{that.bitmap}
-    {
-    }
+                    {
+                    }
 
     Font& Font::operator=(Font&& that)
     {
@@ -133,17 +133,16 @@ namespace fgen
         pdata.reserve(totalChars);
 
         int runningTotal{};
-        std::vector<stbtt_pack_range> pranges;
         for (auto& range : charRanges)
         {
             // Convert our simple PackRange into stbtt_pack_range and calculate packed char data
             // indices.
-            pranges.push_back({range.fontsize, range.first_unicode_char, range.num_chars, &pdata[runningTotal]});
+            ranges.push_back({range.fontsize, range.first_unicode_char, range.num_chars, &pdata[runningTotal]});
             runningTotal += range.num_chars;
         }
 
         stbtt_PackSetOversampling(&pc, 2, 2);
-        if (!stbtt_PackFontRanges(&pc, const_cast<uint8_t*>(&ttf_data[0]), 0, &pranges[0], pranges.size()))
+        if (!stbtt_PackFontRanges(&pc, const_cast<uint8_t*>(&ttf_data[0]), 0, &ranges[0], ranges.size()))
         {
             throw std::runtime_error{"stbtt_PackFontRanges error. Chars cannot fit on bitmap?"};
         }

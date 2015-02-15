@@ -3,8 +3,8 @@ ar = ar
 cxx = clang++
 cxxflags = -Wall -Wextra -pedantic -pedantic-errors -std=c++11 -g -O0 $
     -DDEBUG -Wno-constexpr-not-const -Wno-unused-value -Wno-mismatched-tags $
-    -I./fontgen -isystem./ext/stb
-ldflags = -lGLEW -lGL
+    -I../fontgen -isystem../ext/stb -L../lib
+ldflags = -lGLEW -lGL -lglfw -lfontgen
 
 rule bootstrap
   command = python bootstrap.py --cxx=clang++ --debug
@@ -22,10 +22,7 @@ rule ar
   description = AR $out
 
 build build.ninja: bootstrap | bootstrap.py
-build obj/src/Font.o: compile src/Font.cpp
-build obj/src/OpenGLFont.o: compile src/OpenGLFont.cpp
-build obj/test/main.o: compile test/main.cpp
+build obj/./example.o: compile ./example.cpp
 
-build ./lib/libfontgen.a: ar obj/src/Font.o obj/src/OpenGLFont.o
 
-build ./bin/FontTest: link obj/src/Font.o obj/src/OpenGLFont.o obj/test/main.o
+build ./glfonttest: link obj/./example.o

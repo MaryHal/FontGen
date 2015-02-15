@@ -21,10 +21,18 @@ namespace fgen
         { 20.0f, 0x3000, 0x303F - 0x3000 }  // Punctuation
     };
 
-    Font::Font(const std::string& filename, const std::vector<PackRange>& charRanges)
+    Font::Font(const std::string& filename,
+               const std::vector<PackRange>& charRanges)
         : pdata{}, bitmap{}
     {
         loadFont(filename, charRanges);
+    }
+
+    Font::Font(const uint8_t fontData[], unsigned int dataLength,
+               const std::vector<PackRange>& charRanges)
+        : pdata{}, bitmap{}
+    {
+        loadFont(fontData, dataLength, charRanges);
     }
 
     Font::~Font()
@@ -63,23 +71,53 @@ namespace fgen
         stbi_write_png(filename.c_str(), BITMAP_W, BITMAP_H, 1, &bitmap[0], 0);
     }
 
-    void Font::loadFont(const std::string& filename, const std::vector<PackRange>& charRanges)
+    std::vector<uint8_t> Font::loadDataFromFile(const std::string& filename) const
     {
-        const int DATASIZE = 1 << 25;
-        std::vector<uint8_t> ttf_buffer;
-        ttf_buffer.reserve(DATASIZE);
-
-        // uint8_t temp_bitmap[BITMAP_H][BITMAP_W];
-        bitmap.reserve(BITMAP_W * BITMAP_H);
-
         std::FILE* ttf_file = std::fopen(filename.c_str(), "rb");
         if (!ttf_file)
         {
             throw std::runtime_error{"Could not open ttf file: " + filename};
         }
-        std::fread(&ttf_buffer[0], sizeof(uint8_t), DATASIZE, ttf_file);
+
+        // Read Filesize
+        std::fseek(ttf_file, 0L, SEEK_END);
+        long filesize{ftell(ttf_file)};
+
+        std::rewind(ttf_file);
+
+        std::vector<uint8_t> ttf_buffer;
+        ttf_buffer.reserve(filesize);
+
+        std::fread(&ttf_buffer[0], sizeof(uint8_t), filesize, ttf_file);
         std::fclose(ttf_file);
 
+        return ttf_buffer;
+    }
+
+    std::vector<uint8_t> Font::loadData(const uint8_t fontData[], unsigned int dataLength) const
+    {
+        return std::vector<uint8_t>(fontData, fontData + dataLength);
+    }
+
+    void Font::loadFont(const std::string& filename,
+                        const std::vector<PackRange>& charRanges)
+    {
+        bitmap.reserve(BITMAP_W * BITMAP_H);
+
+        packFont(loadDataFromFile(filename), charRanges);
+    }
+
+    void Font::loadFont(const uint8_t fontData[], unsigned int dataLength,
+                        const std::vector<PackRange>& charRanges)
+    {
+        bitmap.reserve(BITMAP_W * BITMAP_H);
+
+        packFont(loadData(fontData, dataLength), charRanges);
+    }
+
+    void Font::packFont(const std::vector<uint8_t>& ttf_data,
+                        const std::vector<PackRange>& charRanges)
+    {
         stbtt_pack_context pc;
         if (!stbtt_PackBegin(&pc, &bitmap[0], BITMAP_W, BITMAP_H, 0, 1, nullptr))
         {
@@ -100,13 +138,12 @@ namespace fgen
         {
             // Convert our simple PackRange into stbtt_pack_range and calculate packed char data
             // indices.
-            stbtt_pack_range pr = {range.fontsize, range.first_unicode_char, range.num_chars, &pdata[runningTotal]};
-            pranges.push_back(pr);
+            pranges.push_back({range.fontsize, range.first_unicode_char, range.num_chars, &pdata[runningTotal]});
             runningTotal += range.num_chars;
         }
 
         stbtt_PackSetOversampling(&pc, 2, 2);
-        if (!stbtt_PackFontRanges(&pc, &ttf_buffer[0], 0, &pranges[0], pranges.size()))
+        if (!stbtt_PackFontRanges(&pc, const_cast<uint8_t*>(&ttf_data[0]), 0, &pranges[0], pranges.size()))
         {
             throw std::runtime_error{"stbtt_PackFontRanges error. Chars cannot fit on bitmap?"};
         }
@@ -114,31 +151,4 @@ namespace fgen
         // And we're done!
         stbtt_PackEnd(&pc);
     }
-
-// void Font::draw(float x, float y, const std::string& text) const
-// {
-//     glEnable(GL_TEXTURE_2D);
-//     glBindTexture(GL_TEXTURE_2D, texID);
-
-//     // Boo! Immediate mode!
-//     glBegin(GL_QUADS);
-//     for (int c : text)
-//     {
-//         stbtt_aligned_quad q;
-//         stbtt_GetPackedQuad(const_cast<stbtt_packedchar*>(pdata),
-//                             BITMAP_W, BITMAP_H,
-//                             c - 32,
-//                             &x, &y, &q,
-//                             1); //1=opengl & d3d10+,0=d3d9
-
-//         glTexCoord2f(q.s0,q.t0); glVertex2f(q.x0,q.y0);
-//         glTexCoord2f(q.s1,q.t0); glVertex2f(q.x1,q.y0);
-//         glTexCoord2f(q.s1,q.t1); glVertex2f(q.x1,q.y1);
-//         glTexCoord2f(q.s0,q.t1); glVertex2f(q.x0,q.y1);
-//     }
-//     glEnd();
-
-//     glDisable(GL_TEXTURE_2D);
-// }
-
 } /* namespace fgen */

@@ -40,7 +40,7 @@ compiler = args.cxx
 include = ['-I./fontgen', '-isystem./ext/stb']
 depends = []
 libdirs = []
-ldflags = ['-lGLEW', '-lGL', '-lglfw']
+ldflags = ['-lGLEW', '-lGL']
 cxxflags = ['-Wall', '-Wextra', '-pedantic', '-pedantic-errors', '-std=c++11']
 
 if sys.platform == 'win32':

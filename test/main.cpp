@@ -1,7 +1,5 @@
 #include <Font.hpp>
 
-#include <stb_truetype.h>
-
 #include <iostream>
 #include <vector>
 
@@ -25,8 +23,8 @@ int main(int argc, char *argv[])
     {
         fgen::Font font2{fontFile,
             {
-                { 10.0f, 32, 95 }, // ASCII
-                { 50.0f, 0x3260, 0x327B - 0x3260 } // Circled Hangul???
+                { 20.0f, 32, 95 }, // ASCII
+                { 54.0f, 0x3260, 0x327B - 0x3260 } // Circled Hangul???
             }
         };
         font2.writeBitmap("font02.png");
@@ -37,7 +35,7 @@ int main(int argc, char *argv[])
     {
         fgen::Font font3{fontFile,
             {
-                { 8.0f, 0x4E00, /*0x4E35 - 0x4E00*/ 800 }
+                { 14.0f, 0x4E00, /*0x4E35 - 0x4E00*/ 512 }
             }
         };
         font3.writeBitmap("font03.png");

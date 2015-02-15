@@ -13,6 +13,8 @@ namespace fgen
         public:
             OpenGLFont(const std::string& filename,
                        const std::vector<PackRange>& charRanges);
+            OpenGLFont(const uint8_t fontData[], unsigned int dataLength,
+                       const std::vector<PackRange>& charRanges);
             ~OpenGLFont();
 
             // Copying

@@ -14,7 +14,10 @@ namespace fgen
 {
     class Font
     {
-        private:
+        protected:
+            std::vector<stbtt_packedchar> pdata;
+            std::vector<uint8_t> bitmap;
+
             static constexpr unsigned int BITMAP_W = 512;
             static constexpr unsigned int BITMAP_H = 512;
 
@@ -27,15 +30,15 @@ namespace fgen
                     int num_chars;
             };
 
-            std::vector<stbtt_packedchar> pdata;
-            std::vector<uint8_t> bitmap;
-
         public:
             // Static character sets
             static const std::vector<PackRange> jp;
 
         public:
-            Font(const std::string& filename, const std::vector<PackRange>& charRanges);
+            Font(const std::string& filename,
+                 const std::vector<PackRange>& charRanges);
+            Font(const uint8_t fontData[], unsigned int dataLength,
+                 const std::vector<PackRange>& charRanges);
             ~Font();
 
             // Copying
@@ -49,9 +52,17 @@ namespace fgen
             void writeBitmap(const std::string& filename);
 
         private:
-            void loadFont(const std::string& filename, const std::vector<PackRange>& charRanges);
+            std::vector<uint8_t> loadDataFromFile(const std::string& filename) const;
+            std::vector<uint8_t> loadData(const uint8_t fontData[], unsigned int dataLength) const;
 
-            // void draw(float x, float y, const std::string& text) const;
+            void loadFont(const std::string& filename,
+                          const std::vector<PackRange>& charRanges);
+
+            void loadFont(const uint8_t fontData[], unsigned int dataLength,
+                          const std::vector<PackRange>& charRanges);
+
+            void packFont(const std::vector<uint8_t>& ttf_data,
+                          const std::vector<PackRange>& charRanges);
     };
 } /* namespace fgen */
 

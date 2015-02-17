@@ -40,10 +40,11 @@ namespace fgen
     }
 
     Font::Font(const Font& that)
-        : pdata{that.pdata},
+        : ranges{that.ranges},
+          pdata{that.pdata},
           bitmap{that.bitmap}
-                {
-                }
+            {
+            }
 
     Font& Font::operator=(Font that)
     {
@@ -54,13 +55,15 @@ namespace fgen
     }
 
     Font::Font(Font&& that)
-        : pdata{that.pdata},
+        : ranges{that.ranges},
+          pdata{that.pdata},
           bitmap{that.bitmap}
-                    {
-                    }
+            {
+            }
 
     Font& Font::operator=(Font&& that)
     {
+        ranges = that.ranges;
         pdata = that.pdata;
         bitmap = that.bitmap;
 
@@ -69,7 +72,7 @@ namespace fgen
 
     void Font::writeBitmap(const std::string& filename)
     {
-        stbi_write_png(filename.c_str(), BITMAP_W, BITMAP_H, 1, &bitmap[0], 0);
+        stbi_write_png(filename.c_str(), BITMAP_W, BITMAP_H, 1, bitmap.data(), 0);
     }
 
     std::vector<uint8_t> Font::loadDataFromFile(const std::string& filename) const
@@ -86,10 +89,11 @@ namespace fgen
 
         std::rewind(ttf_file);
 
+        // Reserve the correct amount of space for our buffer and load it all in.
         std::vector<uint8_t> ttf_buffer;
         ttf_buffer.reserve(filesize);
 
-        std::fread(&ttf_buffer[0], sizeof(uint8_t), filesize, ttf_file);
+        std::fread(ttf_buffer.data(), sizeof(uint8_t), filesize, ttf_file);
         std::fclose(ttf_file);
 
         return ttf_buffer;
@@ -120,7 +124,7 @@ namespace fgen
                         const std::vector<PackRange>& charRanges)
     {
         stbtt_pack_context pc;
-        if (!stbtt_PackBegin(&pc, &bitmap[0], BITMAP_W, BITMAP_H, 0, 1, nullptr))
+        if (!stbtt_PackBegin(&pc, bitmap.data(), BITMAP_W, BITMAP_H, 0, 1, nullptr))
         {
             throw std::runtime_error{"stbtt_PackBegin error"};
         }
@@ -143,7 +147,7 @@ namespace fgen
         }
 
         stbtt_PackSetOversampling(&pc, 2, 2);
-        if (!stbtt_PackFontRanges(&pc, const_cast<uint8_t*>(&ttf_data[0]), 0, &ranges[0], ranges.size()))
+        if (!stbtt_PackFontRanges(&pc, const_cast<uint8_t*>(ttf_data.data()), 0, ranges.data(), ranges.size()))
         {
             throw std::runtime_error{"stbtt_PackFontRanges error. Chars cannot fit on bitmap?"};
         }

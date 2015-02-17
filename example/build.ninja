@@ -1,13 +1,13 @@
 ninja_required_version = 1.3
 ar = ar
 cxx = clang++
-cxxflags = -Wall -Wextra -pedantic -pedantic-errors -std=c++11 -g -O0 $
-    -DDEBUG -Wno-constexpr-not-const -Wno-unused-value -Wno-mismatched-tags $
-    -I../fontgen -isystem../ext/stb -L../lib
-ldflags = -lGLEW -lGL -lglfw -lfontgen
+cxxflags = -Wall -Wextra -pedantic -pedantic-errors -std=c++11 -DNDEBUG -O3 $
+    -Wno-constexpr-not-const -Wno-unused-value -Wno-mismatched-tags $
+    -I../fontgen -isystem../ext/stb
+ldflags = -lGLEW -lGL -lglfw
 
 rule bootstrap
-  command = python bootstrap.py --cxx=clang++ --debug
+  command = python bootstrap.py --cxx=clang++
   generator = 1
 rule compile
   command = $cxx -MMD -MF $out.d -c $cxxflags $in -o $out
@@ -22,7 +22,10 @@ rule ar
   description = AR $out
 
 build build.ninja: bootstrap | bootstrap.py
+build obj/../src/Font.o: compile ../src/Font.cpp
+build obj/../src/OpenGLFont.o: compile ../src/OpenGLFont.cpp
 build obj/./example.o: compile ./example.cpp
 
 
-build ./glfonttest: link obj/./example.o
+build ./glfonttest: link obj/../src/Font.o obj/../src/OpenGLFont.o $
+    obj/./example.o

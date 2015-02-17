@@ -40,8 +40,8 @@ BUILD_FILENAME = 'build.ninja'
 compiler = args.cxx
 include = ['-I../fontgen', '-isystem../ext/stb']
 depends = []
-libdirs = ['-L../lib']
-ldflags = ['-lGLEW', '-lGL', '-lglfw', '-lfontgen']
+libdirs = []
+ldflags = ['-lGLEW', '-lGL', '-lglfw']
 cxxflags = ['-Wall', '-Wextra', '-pedantic', '-pedantic-errors', '-std=c++11']
 
 if sys.platform == 'win32':
@@ -86,6 +86,13 @@ ninja.newline()
 
 ninja.build('build.ninja', 'bootstrap', implicit = 'bootstrap.py')
 
+
+libobjs = []
+for f in files_from('../src/', '*.cpp'):
+    obj = object_file(f)
+    libobjs.append(obj)
+    ninja.build(obj, 'compile', inputs = f)
+
 testobjs = []
 for f in files_from('./', '*.cpp'):
     obj = object_file(f)
@@ -95,4 +102,4 @@ for f in files_from('./', '*.cpp'):
 ninja.newline()
 
 ninja.newline()
-ninja.build('./glfonttest', 'link', inputs = testobjs)
+ninja.build('./glfonttest', 'link', inputs = libobjs + testobjs)

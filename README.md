@@ -23,4 +23,5 @@ TODO
 ====
 
 - Allow creation of bitmap fonts by dumping font data.
+- More built-in codepoint ranges / more integratable built-in ranges.
 - Modernize OpenGL usage.

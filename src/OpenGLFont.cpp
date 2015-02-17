@@ -6,16 +6,18 @@
 namespace fgen
 {
     OpenGLFont::OpenGLFont(const std::string& filename,
-                           const std::vector<PackRange>& charRanges)
-        : Font{filename, charRanges},
+                           const std::vector<PackRange>& charRanges,
+                           unsigned int width, unsigned int height)
+        : Font{filename, charRanges, width, height},
           textureID{0}
     {
         makeOpenGLTexture();
     }
 
     OpenGLFont::OpenGLFont(const uint8_t fontData[], unsigned int dataLength,
-                           const std::vector<PackRange>& charRanges)
-        : Font{fontData, dataLength, charRanges},
+                           const std::vector<PackRange>& charRanges,
+                           unsigned int width, unsigned int height)
+        : Font{fontData, dataLength, charRanges, width, height},
           textureID{0}
     {
         makeOpenGLTexture();
@@ -44,9 +46,9 @@ namespace fgen
     // Moving
     OpenGLFont::OpenGLFont(OpenGLFont&& that)
         : Font{that}
-        {
-            makeOpenGLTexture();
-        }
+    {
+        makeOpenGLTexture();
+    }
     OpenGLFont& OpenGLFont::operator=(OpenGLFont&& that)
     {
         Font::operator=(that);
@@ -75,7 +77,7 @@ namespace fgen
 
                     stbtt_aligned_quad q;
                     stbtt_GetPackedQuad(r->chardata_for_range,
-                                        BITMAP_W, BITMAP_H,
+                                        bitmapWidth, bitmapHeight,
                                         c - r->first_unicode_char_in_range,
                                         &x, &y, &q,
                                         1); //1=opengl & d3d10+,0=d3d9
@@ -97,9 +99,8 @@ namespace fgen
     {
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA,
-                     BITMAP_W, BITMAP_H, 0, GL_ALPHA,
-                     GL_UNSIGNED_BYTE, &bitmap[0]);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, bitmapWidth, bitmapHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, &bitmap[0]);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <stdint.h>
+#include <utility>
 
 // Get away with forward declaring the C struct.
 struct _stbtt_pack_range;
@@ -15,34 +16,44 @@ typedef _stbtt_packedchar stbtt_packedchar;
 
 namespace fgen
 {
+    namespace set
+    {
+        // Static character sets
+        static const std::pair<int, int> ascii       {32    , 127};
+        static const std::pair<int, int> jp_hiragana {0x3041, 0x3096};
+        static const std::pair<int, int> jp_katakana {0x30A0, 0x30FF};
+        static const std::pair<int, int> jp_punct    {0x3000, 0x303F};
+    }
+
     class Font
     {
         protected:
-            static constexpr unsigned int BITMAP_W = 512;
-            static constexpr unsigned int BITMAP_H = 512;
+            static constexpr unsigned int DEFAULT_BITMAP_W = 512;
+            static constexpr unsigned int DEFAULT_BITMAP_H = 512;
 
             // Simpler version of stbtt_pack_range so a user can add codepoints more easily.
             struct PackRange
             {
                 public:
                     float fontsize;
-                    int first_unicode_char;
-                    int num_chars;
+                    std::pair<int, int> unicodePair;
             };
 
             std::vector<stbtt_pack_range> ranges;
             std::vector<stbtt_packedchar> pdata;
             std::vector<uint8_t> bitmap;
-
-        public:
-            // Static character sets
-            static const std::vector<PackRange> jp;
+            unsigned int bitmapWidth;
+            unsigned int bitmapHeight;
 
         public:
             Font(const std::string& filename,
-                 const std::vector<PackRange>& charRanges);
+                 const std::vector<PackRange>& charRanges,
+                 unsigned int width  = DEFAULT_BITMAP_W,
+                 unsigned int height = DEFAULT_BITMAP_H);
             Font(const uint8_t fontData[], unsigned int dataLength,
-                 const std::vector<PackRange>& charRanges);
+                 const std::vector<PackRange>& charRanges,
+                 unsigned int width  = DEFAULT_BITMAP_W,
+                 unsigned int height = DEFAULT_BITMAP_H);
             ~Font();
 
             // Copying

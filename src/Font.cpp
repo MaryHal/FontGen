@@ -13,27 +13,25 @@
 
 namespace fgen
 {
-    const std::vector<Font::PackRange> Font::jp
-    {
-        { 20.0f, 32, 95 },
-        { 20.0f, 0x3041, 0x3096 - 0x3041 }, // Hiragana
-        { 20.0f, 0x30A0, 0x30FF - 0x30A0 }, // Katakana
-        { 20.0f, 0x3000, 0x303F - 0x3000 }  // Punctuation
-    };
-
     Font::Font(const std::string& filename,
-               const std::vector<PackRange>& charRanges)
-        : ranges{}, pdata{}, bitmap{}
-        {
-            loadFont(filename, charRanges);
-        }
+               const std::vector<PackRange>& charRanges,
+               unsigned int width, unsigned int height)
+        : ranges{}, pdata{}, bitmap{},
+          bitmapWidth{width},
+          bitmapHeight{height}
+    {
+        loadFont(filename, charRanges);
+    }
 
     Font::Font(const uint8_t fontData[], unsigned int dataLength,
-               const std::vector<PackRange>& charRanges)
-        : ranges{}, pdata{}, bitmap{}
-            {
-                loadFont(fontData, dataLength, charRanges);
-            }
+               const std::vector<PackRange>& charRanges,
+               unsigned int width, unsigned int height)
+        : ranges{}, pdata{}, bitmap{},
+          bitmapWidth{width},
+          bitmapHeight{height}
+    {
+        loadFont(fontData, dataLength, charRanges);
+    }
 
     Font::~Font()
     {
@@ -42,24 +40,32 @@ namespace fgen
     Font::Font(const Font& that)
         : ranges{that.ranges},
           pdata{that.pdata},
-          bitmap{that.bitmap}
-            {
-            }
+          bitmap{that.bitmap},
+          bitmapWidth{that.bitmapWidth},
+          bitmapHeight{that.bitmapHeight}
+    {
+    }
 
     Font& Font::operator=(Font that)
     {
         std::swap(ranges, that.ranges);
         std::swap(pdata, that.pdata);
         std::swap(bitmap, that.bitmap);
+
+        bitmapWidth  = that.bitmapWidth;
+        bitmapHeight = that.bitmapHeight;
+
         return *this;
     }
 
     Font::Font(Font&& that)
         : ranges{that.ranges},
           pdata{that.pdata},
-          bitmap{that.bitmap}
-            {
-            }
+          bitmap{that.bitmap},
+          bitmapWidth{that.bitmapWidth},
+          bitmapHeight{that.bitmapHeight}
+    {
+    }
 
     Font& Font::operator=(Font&& that)
     {
@@ -67,12 +73,15 @@ namespace fgen
         pdata = that.pdata;
         bitmap = that.bitmap;
 
+        bitmapWidth  = that.bitmapWidth;
+        bitmapHeight = that.bitmapHeight;
+
         return *this;
     }
 
     void Font::writeBitmap(const std::string& filename)
     {
-        stbi_write_png(filename.c_str(), BITMAP_W, BITMAP_H, 1, bitmap.data(), 0);
+        stbi_write_png(filename.c_str(), bitmapWidth, bitmapHeight, 1, bitmap.data(), 0);
     }
 
     std::vector<uint8_t> Font::loadDataFromFile(const std::string& filename) const
@@ -107,7 +116,7 @@ namespace fgen
     void Font::loadFont(const std::string& filename,
                         const std::vector<PackRange>& charRanges)
     {
-        bitmap.reserve(BITMAP_W * BITMAP_H);
+        bitmap.reserve(bitmapWidth * bitmapHeight);
 
         packFont(loadDataFromFile(filename), charRanges);
     }
@@ -115,7 +124,7 @@ namespace fgen
     void Font::loadFont(const uint8_t fontData[], unsigned int dataLength,
                         const std::vector<PackRange>& charRanges)
     {
-        bitmap.reserve(BITMAP_W * BITMAP_H);
+        bitmap.reserve(bitmapWidth * bitmapHeight);
 
         packFont(loadData(fontData, dataLength), charRanges);
     }
@@ -124,7 +133,7 @@ namespace fgen
                         const std::vector<PackRange>& charRanges)
     {
         stbtt_pack_context pc;
-        if (!stbtt_PackBegin(&pc, bitmap.data(), BITMAP_W, BITMAP_H, 0, 1, nullptr))
+        if (!stbtt_PackBegin(&pc, bitmap.data(), bitmapWidth, bitmapHeight, 0, 1, nullptr))
         {
             throw std::runtime_error{"stbtt_PackBegin error"};
         }
@@ -133,7 +142,7 @@ namespace fgen
         int totalChars{};
         for (auto& range : charRanges)
         {
-            totalChars += range.num_chars;
+            totalChars += range.unicodePair.second - range.unicodePair.first;
         }
         pdata.reserve(totalChars);
 
@@ -142,8 +151,8 @@ namespace fgen
         {
             // Convert our simple PackRange into stbtt_pack_range and calculate packed char data
             // indices.
-            ranges.push_back({range.fontsize, range.first_unicode_char, range.num_chars, &pdata[runningTotal]});
-            runningTotal += range.num_chars;
+            ranges.push_back({range.fontsize, range.unicodePair.first, range.unicodePair.second - range.unicodePair.first, &pdata[runningTotal]});
+            runningTotal += range.unicodePair.second - range.unicodePair.first;
         }
 
         stbtt_PackSetOversampling(&pc, 2, 2);

@@ -12,9 +12,13 @@ namespace fgen
 
         public:
             OpenGLFont(const std::string& filename,
-                       const std::vector<PackRange>& charRanges);
+                       const std::vector<PackRange>& charRanges,
+                       unsigned int width  = DEFAULT_BITMAP_W,
+                       unsigned int height = DEFAULT_BITMAP_H);
             OpenGLFont(const uint8_t fontData[], unsigned int dataLength,
-                       const std::vector<PackRange>& charRanges);
+                       const std::vector<PackRange>& charRanges,
+                       unsigned int width  = DEFAULT_BITMAP_W,
+                       unsigned int height = DEFAULT_BITMAP_H);
             ~OpenGLFont();
 
             // Copying

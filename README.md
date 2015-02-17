@@ -11,17 +11,21 @@ Example:
 
     fgen::OpenGLFont font
     {
-        "../bin/DroidSansFallback.ttf",
+        "../bin/DroidSansFallback.ttf", // Filename
         {
-            { 20.0f, 32, 95 }, // ASCII
-            { 20.0f, 0x3041, 0x3096 - 0x3041 } // Hiragana
+            // Size, Unicode range pair
+            { 20.0f, fgen::set::ascii },
+            { 20.0f, fgen::set::jp_hiragana },
+            { 20.0f, { 0x00A1, 0x00FF } }
         }
     };
+
     font.draw(16.0f, 16.0f, L"Hello World あおいえう");
 
 TODO
 ====
 
 - Allow creation of bitmap fonts by dumping font data.
+- Mixed fonts maybe? Pulling characters from multiple TTF files.
 - More built-in codepoint ranges / more integratable built-in ranges.
 - Modernize OpenGL usage.

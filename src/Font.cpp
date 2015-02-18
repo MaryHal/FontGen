@@ -20,7 +20,8 @@ namespace fgen
           bitmapWidth{width},
           bitmapHeight{height}
     {
-        loadFont(filename, charRanges);
+        bitmap.reserve(bitmapWidth * bitmapHeight);
+        packFont(loadDataFromFile(filename), charRanges);
     }
 
     Font::Font(const uint8_t fontData[], unsigned int dataLength,
@@ -30,7 +31,8 @@ namespace fgen
           bitmapWidth{width},
           bitmapHeight{height}
     {
-        loadFont(fontData, dataLength, charRanges);
+        bitmap.reserve(bitmapWidth * bitmapHeight);
+        packFont(loadData(fontData, dataLength), charRanges);
     }
 
     Font::~Font()
@@ -44,6 +46,7 @@ namespace fgen
           bitmapWidth{that.bitmapWidth},
           bitmapHeight{that.bitmapHeight}
     {
+        rebuildRangePointers();
     }
 
     Font& Font::operator=(Font that)
@@ -55,6 +58,8 @@ namespace fgen
         bitmapWidth  = that.bitmapWidth;
         bitmapHeight = that.bitmapHeight;
 
+        rebuildRangePointers();
+
         return *this;
     }
 
@@ -65,6 +70,7 @@ namespace fgen
           bitmapWidth{that.bitmapWidth},
           bitmapHeight{that.bitmapHeight}
     {
+        rebuildRangePointers();
     }
 
     Font& Font::operator=(Font&& that)
@@ -76,6 +82,8 @@ namespace fgen
         bitmapWidth  = that.bitmapWidth;
         bitmapHeight = that.bitmapHeight;
 
+        rebuildRangePointers();
+
         return *this;
     }
 
@@ -84,7 +92,7 @@ namespace fgen
         stbi_write_png(filename.c_str(), bitmapWidth, bitmapHeight, 1, bitmap.data(), 0);
     }
 
-    std::vector<uint8_t> Font::loadDataFromFile(const std::string& filename) const
+    const std::vector<uint8_t> Font::loadDataFromFile(const std::string& filename) const
     {
         std::FILE* ttf_file = std::fopen(filename.c_str(), "rb");
         if (!ttf_file)
@@ -108,28 +116,13 @@ namespace fgen
         return ttf_buffer;
     }
 
-    std::vector<uint8_t> Font::loadData(const uint8_t fontData[], unsigned int dataLength) const
+    const std::vector<uint8_t> Font::loadData(const uint8_t fontData[],
+                                              unsigned int dataLength) const
     {
         return std::vector<uint8_t>(fontData, fontData + dataLength);
     }
 
-    void Font::loadFont(const std::string& filename,
-                        const std::vector<PackRange>& charRanges)
-    {
-        bitmap.reserve(bitmapWidth * bitmapHeight);
-
-        packFont(loadDataFromFile(filename), charRanges);
-    }
-
-    void Font::loadFont(const uint8_t fontData[], unsigned int dataLength,
-                        const std::vector<PackRange>& charRanges)
-    {
-        bitmap.reserve(bitmapWidth * bitmapHeight);
-
-        packFont(loadData(fontData, dataLength), charRanges);
-    }
-
-    void Font::packFont(const std::vector<uint8_t>& ttf_data,
+    void Font::packFont(const std::vector<uint8_t>&& ttf_data,
                         const std::vector<PackRange>& charRanges)
     {
         stbtt_pack_context pc;
@@ -163,5 +156,15 @@ namespace fgen
 
         // And we're done!
         stbtt_PackEnd(&pc);
+    }
+
+    void Font::rebuildRangePointers()
+    {
+        int runningTotal{};
+        for (auto& range : ranges)
+        {
+            range.chardata_for_range = &pdata.data()[runningTotal];
+            runningTotal += range.num_chars_in_range;
+        }
     }
 } /* namespace fgen */

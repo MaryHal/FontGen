@@ -19,10 +19,13 @@ namespace fgen
     namespace set
     {
         // Static character sets
-        static const std::pair<int, int> ascii       {32    , 127};
-        static const std::pair<int, int> jp_hiragana {0x3041, 0x3096};
-        static const std::pair<int, int> jp_katakana {0x30A0, 0x30FF};
-        static const std::pair<int, int> jp_punct    {0x3000, 0x303F};
+        static const std::pair<int, int> ascii {32, 127};
+        namespace jp
+        {
+            static const std::pair<int, int> hiragana {0x3041, 0x3096};
+            static const std::pair<int, int> katakana {0x30A0, 0x30FF};
+            static const std::pair<int, int> punct    {0x3000, 0x303F};
+        }
     }
 
     class Font
@@ -69,18 +72,14 @@ namespace fgen
 
         private:
             // Load font data into a buffer
-            std::vector<uint8_t> loadDataFromFile(const std::string& filename) const;
-            std::vector<uint8_t> loadData(const uint8_t fontData[], unsigned int dataLength) const;
-
-            // Load and pack fonts
-            void loadFont(const std::string& filename,
-                          const std::vector<PackRange>& charRanges);
-            void loadFont(const uint8_t fontData[], unsigned int dataLength,
-                          const std::vector<PackRange>& charRanges);
+            const std::vector<uint8_t> loadDataFromFile(const std::string& filename) const;
+            const std::vector<uint8_t> loadData(const uint8_t fontData[], unsigned int dataLength) const;
 
             // Create a font bitmap and setup font data.
-            void packFont(const std::vector<uint8_t>& ttf_data,
+            void packFont(const std::vector<uint8_t>&& ttf_data,
                           const std::vector<PackRange>& charRanges);
+
+            void rebuildRangePointers();
     };
 } /* namespace fgen */
 

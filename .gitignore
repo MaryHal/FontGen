@@ -17,22 +17,22 @@
 .clang_complete
 project.el
 
-example/bin/bltest
-example/bin/.ninja_deps
-example/bin/.ninja_log
+/example/glfonttest
+/example/.ninja_deps
+/example/.ninja_log
+
+/bin/.ninja_log
+/bin/.ninja_deps
+/bin/FontTest
+
 obj/
 
-/*.gif
+*.gif
+*.png
+*.ttc
+*.ttf
+
 /__pycache__/
 /compile_commands.json
 /.ninja_deps
 /.ninja_log
-/bin/.ninja_log
-/bin/.ninja_deps
-/bin/*.png
-/bin/*.ttc
-/bin/*.ttf
-/bin/FontTest
-/example/glfonttest
-/example/.ninja_deps
-/example/.ninja_log

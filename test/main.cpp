@@ -17,9 +17,9 @@ int main(int argc, char *argv[])
         fgen::Font font{fontFile,
             {
                 { 20.0f, fgen::set::ascii },
-                { 20.0f, fgen::set::jp_hiragana },
-                { 20.0f, fgen::set::jp_katakana },
-                { 20.0f, fgen::set::jp_punct }
+                { 20.0f, fgen::set::jp::hiragana },
+                { 20.0f, fgen::set::jp::katakana },
+                { 20.0f, fgen::set::jp::punct }
             }
         };
 

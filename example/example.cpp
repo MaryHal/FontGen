@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
         "../bin/DroidSansFallback.ttf",
         {
             { 20.0f, fgen::set::ascii }, // ASCII
-            { 20.0f, fgen::set::jp_hiragana }, // Hiragana
+            { 20.0f, fgen::set::jp::hiragana }, // Hiragana
             { 20.0f, { 0x00A1, 0x00FF } }
         }
     };

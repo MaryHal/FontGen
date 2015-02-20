@@ -16,10 +16,12 @@ typedef _stbtt_packedchar stbtt_packedchar;
 
 namespace fgen
 {
-    namespace set
+    namespace charset
     {
         // Static character sets
-        static const std::pair<int, int> ascii {32, 127};
+        static const std::pair<int, int> ascii    {32, 127};
+        static const std::pair<int, int> greek    {0x0370, 0x03FF};
+        static const std::pair<int, int> cyrillic {0x0400, 0x04FF};
         namespace jp
         {
             static const std::pair<int, int> hiragana {0x3041, 0x3096};
@@ -53,10 +55,12 @@ namespace fgen
                  const std::vector<PackRange>& charRanges,
                  unsigned int width  = DEFAULT_BITMAP_W,
                  unsigned int height = DEFAULT_BITMAP_H);
+
             Font(const uint8_t fontData[], unsigned int dataLength,
                  const std::vector<PackRange>& charRanges,
                  unsigned int width  = DEFAULT_BITMAP_W,
                  unsigned int height = DEFAULT_BITMAP_H);
+
             ~Font();
 
             // Copying
@@ -70,6 +74,9 @@ namespace fgen
             // Write our font bitmap as a png file.
             void writeBitmap(const std::string& filename);
 
+            // Write font data to a file.
+            void writeData(const std::string& filename) = delete;
+
         private:
             // Load font data into a buffer
             const std::vector<uint8_t> loadDataFromFile(const std::string& filename) const;
@@ -79,6 +86,9 @@ namespace fgen
             void packFont(const std::vector<uint8_t>&& ttf_data,
                           const std::vector<PackRange>& charRanges);
 
+            // Since we store char range data and char data separately, when we copy/move this
+            // object range data pointers will be invalidated. This function will set the pointers
+            // to their proper locations.
             void rebuildRangePointers();
     };
 } /* namespace fgen */

@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
+#include <iostream>
+
 class Application
 {
     private:
@@ -83,12 +85,17 @@ int main(int argc, char *argv[])
     (void)argc, (void)argv;
 
     Application app;
+
+    int maxTexSize{};
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+    std::cout << maxTexSize << '\n';
+
     fgen::OpenGLFont font
     {
         "../bin/DroidSansFallback.ttf",
         {
-            { 20.0f, fgen::set::ascii }, // ASCII
-            { 20.0f, fgen::set::jp::hiragana }, // Hiragana
+            { 20.0f, fgen::charset::ascii }, // ASCII
+            { 20.0f, fgen::charset::jp::hiragana }, // Hiragana
             { 20.0f, { 0x00A1, 0x00FF } }
         }
     };

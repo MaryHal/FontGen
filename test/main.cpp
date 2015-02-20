@@ -16,10 +16,10 @@ int main(int argc, char *argv[])
         std::cout << ">>> Creating JP bitmap\n";
         fgen::Font font{fontFile,
             {
-                { 20.0f, fgen::set::ascii },
-                { 20.0f, fgen::set::jp::hiragana },
-                { 20.0f, fgen::set::jp::katakana },
-                { 20.0f, fgen::set::jp::punct }
+                { 20.0f, fgen::charset::ascii },
+                { 20.0f, fgen::charset::jp::hiragana },
+                { 20.0f, fgen::charset::jp::katakana },
+                { 20.0f, fgen::charset::jp::punct }
             }
         };
 
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
         std::cout << ">>> Creating Mixed bitmap\n";
         fgen::Font font{fontFile,
             {
-                { 20.0f, fgen::set::ascii }, // ASCII
+                { 20.0f, fgen::charset::ascii }, // ASCII
                 { 54.0f, { 0x3260, 0x327B } } // Circled Hangul???
             }
         };
@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
         std::cout << ">>> Creating CJK-unified bitmap\n";
         fgen::Font font{fontFile,
             {
-                { 14.0f, { 0x4E00, 0x4E00 + 2048 } }
+                { 14.0f, { 0x4E00, 0x4E00 + 20000 } }
             },
-            1024, 1024
+            4096, 4096
         };
         font.writeBitmap("font03.png");
         std::cout << "<<< CJK-unified bitmap created\n";

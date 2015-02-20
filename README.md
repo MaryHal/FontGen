@@ -15,7 +15,7 @@ Example:
         {
             // Size, Unicode range pair
             { 20.0f, fgen::set::ascii },
-            { 20.0f, fgen::set::jp_hiragana },
+            { 20.0f, fgen::set::jp::hiragana },
             { 20.0f, { 0x00A1, 0x00FF } }
         }
     };

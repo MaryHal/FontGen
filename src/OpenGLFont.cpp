@@ -1,4 +1,4 @@
-#include <OpenGLFont.hpp>
+#include <fontgen/OpenGLFont.hpp>
 #include <GL/glew.h>
 
 #include <stb_truetype.h>

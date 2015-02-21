@@ -1,7 +1,7 @@
 #ifndef _OpenGLFont_hpp_
 #define _OpenGLFont_hpp_
 
-#include <Font.hpp>
+#include <fontgen/Font.hpp>
 
 namespace fgen
 {

@@ -1,4 +1,4 @@
-#include <Font.hpp>
+#include <fontgen/Font.hpp>
 
 #include <iostream>
 #include <vector>
@@ -47,9 +47,11 @@ int main(int argc, char *argv[])
         std::cout << ">>> Creating CJK-unified bitmap\n";
         fgen::Font font{fontFile,
             {
-                { 14.0f, { 0x4E00, 0x4E00 + 20000 } }
+                /* { 14.0f, { 0x4E00, 0x4E00 + 20000 } } */
+                { 14.0f, { 0x4E00, 0x4E00 + 1000 } }
             },
-            4096, 4096
+            /* 4096, 4096 */
+            1024, 1024
         };
         font.writeBitmap("font03.png");
         std::cout << "<<< CJK-unified bitmap created\n";

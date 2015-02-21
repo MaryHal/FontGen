@@ -1,4 +1,4 @@
-#include <OpenGLFont.hpp>
+#include <fontgen/OpenGLFont.hpp>
 
 #include <GLFW/glfw3.h>
 #include <stdexcept>

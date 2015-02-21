@@ -37,7 +37,7 @@ args = parser.parse_args()
 BUILD_FILENAME = 'build.ninja'
 
 compiler = args.cxx
-include = ['-I./fontgen', '-isystem./ext/stb']
+include = ['-I./include', '-isystem./ext/stb']
 depends = []
 libdirs = []
 ldflags = ['-lGLEW', '-lGL']

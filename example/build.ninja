@@ -3,7 +3,7 @@ ar = ar
 cxx = clang++
 cxxflags = -Wall -Wextra -pedantic -pedantic-errors -std=c++11 -DNDEBUG -O3 $
     -Wno-constexpr-not-const -Wno-unused-value -Wno-mismatched-tags $
-    -I../fontgen -isystem../ext/stb
+    -I../include -isystem../ext/stb
 ldflags = -lGLEW -lGL -lglfw
 
 rule bootstrap

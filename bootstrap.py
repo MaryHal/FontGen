@@ -68,8 +68,8 @@ ninja = ninja_syntax.Writer(open('build.ninja', 'w'))
 ninja.variable('ninja_required_version', '1.3')
 ninja.variable('ar', 'ar')
 ninja.variable('cxx', compiler)
-ninja.variable('cxxflags', flags(cxxflags + include + libdirs + depends))
-ninja.variable('ldflags', flags(ldflags))
+ninja.variable('cxxflags', flags(cxxflags + include + depends))
+ninja.variable('ldflags', flags(libdirs + ldflags))
 ninja.newline()
 
 # Rules

@@ -57,7 +57,7 @@ namespace fgen
         return *this;
     }
 
-    void OpenGLFont::draw(float x, float y, const std::wstring& text)
+    void OpenGLFont::draw(float x, float y, const std::wstring& text) const
     {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, textureID);

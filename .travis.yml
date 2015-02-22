@@ -14,5 +14,6 @@ before_install:
     - sudo apt-get --yes install g++-4.8
     - if [ "$CXX" == "g++" ]; then export CXX=g++-4.8; fi
     - sudo apt-get --yes install ninja-build
+    - sudo apt-get --yes install libglew-dev
 
 script: python ./bootstrap.py --ci --cxx=$CXX && ninja

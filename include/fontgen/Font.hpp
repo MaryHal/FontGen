@@ -41,7 +41,7 @@ namespace fgen
             {
                 public:
                     float fontsize;
-                    std::pair<int, int> unicodePair;
+                    std::pair<int, int> unicodePair; // Inclusive range
             };
 
             std::vector<stbtt_pack_range> ranges;

@@ -71,7 +71,7 @@ namespace fgen
             for (const stbtt_pack_range& range : ranges)
             {
                 if (c >= range.first_unicode_char_in_range &&
-                    c < range.first_unicode_char_in_range + range.num_chars_in_range)
+                    c <= range.first_unicode_char_in_range + range.num_chars_in_range)
                 {
                     r = &range;
 

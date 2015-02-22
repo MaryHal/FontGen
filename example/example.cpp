@@ -86,18 +86,20 @@ int main(int argc, char *argv[])
 
     Application app;
 
-    int maxTexSize{};
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-    std::cout << maxTexSize << '\n';
+    // int maxTexSize{};
+    // glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+    // std::cout << maxTexSize << '\n';
 
     fgen::OpenGLFont font
     {
         "../bin/DroidSansFallback.ttf",
         {
-            { 20.0f, fgen::charset::ascii }, // ASCII
-            { 20.0f, fgen::charset::jp::hiragana }, // Hiragana
-            { 20.0f, { 0x00A1, 0x00FF } }
-        }
+            { 40.0f, fgen::charset::ascii }, // ASCII
+            { 40.0f, fgen::charset::jp::hiragana }, // Hiragana
+            { 40.0f, { 0x21E6, 0x21E9 } }, // Arrows
+            { 40.0f, { 0x2190, 0x2193 } }  // Arrows 2
+        },
+        1024, 1024
     };
 
     font.writeBitmap("font.png");
@@ -107,8 +109,12 @@ int main(int argc, char *argv[])
     {
         app.clear();
 
-        font.draw(16.0f, 16.0f, L"Hello Worldあおいえう");
-
+        font.draw(16.0f, 30.0f,  L"Aa Bb Cc あぁおぉいぃえぇうぅ");
+        font.draw(16.0f, 70.0f,  L"abcdefghijklmnopqrstuvwxyz");
+        font.draw(16.0f, 110.0f, L"ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        font.draw(16.0f, 150.0f, L"1234567890!@#$%^&*()");
+        font.draw(16.0f, 190.0f, L"⇦⇨⇧⇩");
+        font.draw(16.0f, 230.0f, L"←↑→↓");
         app.swapBuffers();
         app.pollEvents();
     }

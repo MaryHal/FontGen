@@ -13,9 +13,9 @@ Example:
     {
         "../bin/DroidSansFallback.ttf", // Filename
         {
-            // Size, Unicode range pair
-            { 20.0f, fgen::set::ascii },
-            { 20.0f, fgen::set::jp::hiragana },
+            // Size, Unicode range pair (inclusive)
+            { 20.0f, fgen::charset::ascii },
+            { 20.0f, fgen::charset::jp::hiragana },
             { 20.0f, { 0x00A1, 0x00FF } }
         }
     };

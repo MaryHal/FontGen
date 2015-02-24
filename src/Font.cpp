@@ -10,7 +10,6 @@
 #include <stb_image_write.h>
 
 #include <stdexcept>
-#include <iostream>
 
 namespace fgen
 {
@@ -147,9 +146,6 @@ namespace fgen
             // indices.
             ranges.push_back({range.fontsize, range.unicodePair.first, 1 + range.unicodePair.second - range.unicodePair.first, &pdata[runningTotal]});
             runningTotal += 1 + range.unicodePair.second - range.unicodePair.first;
-
-            std::cout << std::to_string(range.unicodePair.second - range.unicodePair.first) << std::endl;
-            std::cout << std::to_string(ranges.back().num_chars_in_range) << std::endl;
         }
 
         stbtt_PackSetOversampling(&pc, 2, 2);

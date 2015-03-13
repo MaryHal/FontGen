@@ -30,6 +30,7 @@ namespace fgen
             OpenGLFont& operator=(OpenGLFont&& that);
 
             void draw(float x, float y, const std::wstring& text) const;
+            void drawChar(float& x, float& y, const wchar_t c) const;
 
         private:
             void makeOpenGLTexture();

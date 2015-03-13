@@ -133,14 +133,14 @@ namespace fgen
 
         // Figure out how many characters to save data for.
         int totalChars{};
-        for (auto& range : charRanges)
+        for (const auto& range : charRanges)
         {
             totalChars += 1 + range.unicodePair.second - range.unicodePair.first;
         }
         pdata.reserve(totalChars);
 
         int runningTotal{};
-        for (auto& range : charRanges)
+        for (const auto& range : charRanges)
         {
             // Convert our simple PackRange into stbtt_pack_range and calculate packed char data
             // indices.

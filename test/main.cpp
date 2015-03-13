@@ -57,5 +57,18 @@ int main(int argc, char *argv[])
         std::cout << "<<< CJK-unified bitmap created\n";
     }
 
+    std::cout << '\n';
+
+    {
+        std::cout << ">>> Creating miscellaneous bitmap\n";
+        fgen::Font font{fontFile,
+            {
+                { 30.0f, { 0x2700, 0x27BF } }
+            }
+        };
+        font.writeBitmap("font04.png");
+        std::cout << "<<< Miscellaneous bitmap created\n";
+    }
+
     return 0;
 }

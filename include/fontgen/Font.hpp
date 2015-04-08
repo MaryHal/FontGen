@@ -30,6 +30,18 @@ namespace fgen
         }
     }
 
+    class FontData
+    {
+        private:
+            std::vector<uint8_t> buffer;
+
+        public:
+            FontData(const std::string& filename);
+            FontData(const uint8_t data[], unsigned int dataLength);
+
+            const std::vector<uint8_t>& get() const;
+    };
+
     class Font
     {
         protected:
@@ -61,6 +73,11 @@ namespace fgen
                  unsigned int width  = DEFAULT_BITMAP_W,
                  unsigned int height = DEFAULT_BITMAP_H);
 
+            Font(const FontData& fontData,
+                 const std::vector<PackRange>& charRanges,
+                 unsigned int width  = DEFAULT_BITMAP_W,
+                 unsigned int height = DEFAULT_BITMAP_H);
+
             ~Font();
 
             // Copying
@@ -83,7 +100,7 @@ namespace fgen
             const std::vector<uint8_t> loadData(const uint8_t fontData[], unsigned int dataLength) const;
 
             // Create a font bitmap and setup font data.
-            void packFont(const std::vector<uint8_t>&& ttf_data,
+            void packFont(const FontData& fontData,
                           const std::vector<PackRange>& charRanges);
 
             // Since we store char range data and char data separately, when we copy/move this

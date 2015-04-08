@@ -13,18 +13,52 @@
 
 namespace fgen
 {
+    FontData::FontData(const std::string& filename)
+    {
+        std::FILE* ttf_file = std::fopen(filename.c_str(), "rb");
+        if (!ttf_file)
+        {
+            throw std::runtime_error{"Could not open ttf file: " + filename};
+        }
+
+        // Read Filesize
+        std::fseek(ttf_file, 0L, SEEK_END);
+        long filesize{ftell(ttf_file)};
+
+        std::rewind(ttf_file);
+
+        // Reserve the correct amount of space for our buffer and load it all in.
+        buffer.reserve(filesize);
+
+        std::fread(buffer.data(), sizeof(uint8_t), filesize, ttf_file);
+        std::fclose(ttf_file);
+    }
+
+    FontData::FontData(const uint8_t data[], unsigned int dataLength)
+        : buffer{data, data + dataLength}
+    {
+    }
+
+    const std::vector<uint8_t>& FontData::get() const
+    {
+        return buffer;
+    }
+
     Font::Font(const std::string& filename,
                const std::vector<PackRange>& charRanges,
                unsigned int width, unsigned int height)
-        : ranges{}, pdata{}, bitmap{},
-          bitmapWidth{width},
-          bitmapHeight{height}
+        : Font{FontData{filename}, charRanges, width, height}
     {
-        bitmap.reserve(bitmapWidth * bitmapHeight);
-        packFont(loadDataFromFile(filename), charRanges);
     }
 
-    Font::Font(const uint8_t fontData[], unsigned int dataLength,
+    Font::Font(const uint8_t data[], unsigned int dataLength,
+               const std::vector<PackRange>& charRanges,
+               unsigned int width, unsigned int height)
+        : Font{FontData{data, dataLength}, charRanges, width, height}
+    {
+    }
+
+    Font::Font(const FontData& fontData,
                const std::vector<PackRange>& charRanges,
                unsigned int width, unsigned int height)
         : ranges{}, pdata{}, bitmap{},
@@ -32,7 +66,7 @@ namespace fgen
           bitmapHeight{height}
     {
         bitmap.reserve(bitmapWidth * bitmapHeight);
-        packFont(loadData(fontData, dataLength), charRanges);
+        packFont(fontData, charRanges);
     }
 
     Font::~Font()
@@ -92,37 +126,7 @@ namespace fgen
         stbi_write_png(filename.c_str(), bitmapWidth, bitmapHeight, 1, bitmap.data(), 0);
     }
 
-    const std::vector<uint8_t> Font::loadDataFromFile(const std::string& filename) const
-    {
-        std::FILE* ttf_file = std::fopen(filename.c_str(), "rb");
-        if (!ttf_file)
-        {
-            throw std::runtime_error{"Could not open ttf file: " + filename};
-        }
-
-        // Read Filesize
-        std::fseek(ttf_file, 0L, SEEK_END);
-        long filesize{ftell(ttf_file)};
-
-        std::rewind(ttf_file);
-
-        // Reserve the correct amount of space for our buffer and load it all in.
-        std::vector<uint8_t> ttf_buffer;
-        ttf_buffer.reserve(filesize);
-
-        std::fread(ttf_buffer.data(), sizeof(uint8_t), filesize, ttf_file);
-        std::fclose(ttf_file);
-
-        return ttf_buffer;
-    }
-
-    const std::vector<uint8_t> Font::loadData(const uint8_t fontData[],
-                                              unsigned int dataLength) const
-    {
-        return std::vector<uint8_t>(fontData, fontData + dataLength);
-    }
-
-    void Font::packFont(const std::vector<uint8_t>&& ttf_data,
+    void Font::packFont(const FontData& fontData,
                         const std::vector<PackRange>& charRanges)
     {
         stbtt_pack_context pc;
@@ -149,7 +153,7 @@ namespace fgen
         }
 
         stbtt_PackSetOversampling(&pc, 2, 2);
-        if (!stbtt_PackFontRanges(&pc, const_cast<uint8_t*>(ttf_data.data()), 0, ranges.data(), ranges.size()))
+        if (!stbtt_PackFontRanges(&pc, const_cast<uint8_t*>(fontData.get().data()), 0, ranges.data(), ranges.size()))
         {
             throw std::runtime_error{"stbtt_PackFontRanges error. Chars cannot fit on bitmap?"};
         }

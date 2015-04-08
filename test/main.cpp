@@ -10,11 +10,16 @@ int main(int argc, char *argv[])
         std::cout << "Give me a ttf file!\nUsage: ./FontGen <fontfile>\n";
         return -1;
     }
+
     std::string fontFile = argv[1];
+
+    fgen::FontData fontData{fontFile};
 
     {
         std::cout << ">>> Creating JP bitmap\n";
-        fgen::Font font{fontFile,
+        fgen::Font font
+        {
+            fontData,
             {
                 { 20.0f, fgen::charset::ascii },
                 { 20.0f, fgen::charset::jp::hiragana },
@@ -31,7 +36,9 @@ int main(int argc, char *argv[])
 
     {
         std::cout << ">>> Creating Mixed bitmap\n";
-        fgen::Font font{fontFile,
+        fgen::Font font
+        {
+            fontData,
             {
                 { 20.0f, fgen::charset::ascii }, // ASCII
                 { 54.0f, { 0x3260, 0x327B } } // Circled Hangul???
@@ -45,13 +52,15 @@ int main(int argc, char *argv[])
 
     {
         std::cout << ">>> Creating CJK-unified bitmap\n";
-        fgen::Font font{fontFile,
+        fgen::Font font
+        {
+            fontData,
             {
                 /* { 14.0f, { 0x4E00, 0x4E00 + 20000 } } */
                 { 14.0f, { 0x4E00, 0x4E00 + 1000 } }
-            },
-            /* 4096, 4096 */
-            1024, 1024
+            }
+            // Custom bitmap size
+            , 1024, 1024
         };
         font.writeBitmap("font03.png");
         std::cout << "<<< CJK-unified bitmap created\n";
@@ -61,7 +70,9 @@ int main(int argc, char *argv[])
 
     {
         std::cout << ">>> Creating miscellaneous bitmap\n";
-        fgen::Font font{fontFile,
+        fgen::Font font
+        {
+            fontData,
             {
                 { 30.0f, { 0x2700, 0x27BF } }
             }

@@ -22,5 +22,5 @@ addons:
             - libglew-dev
 
 script:
-    - python ./bootstrap.py --ci --cxx=$CC
+    - python ./bootstrap.py --ci --cxx=$CXX
     - ninja

@@ -1,7 +1,7 @@
 FontGen [![Build Status](https://travis-ci.org/sanford1/FontGen.svg?branch=master)](https://travis-ci.org/sanford1/FontGen)
 =======
 
-C++11/Opengl - Simple font library. Generates packed bitmaps
+C++11/Opengl - Simple font library that generates packed bitmaps.
 
 Build using:
 

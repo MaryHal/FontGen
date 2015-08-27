@@ -28,7 +28,7 @@ project.el
 obj/
 
 *.gif
-*.png
+bin/*.png
 *.ttc
 *.ttf
 

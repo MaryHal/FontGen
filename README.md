@@ -24,7 +24,7 @@ Example:
 
 Generated Bitmap:
 
-![Build Status](https://raw.githubusercontent.com/sanford1/FontGen/master/font01.png)
+![font01](https://raw.githubusercontent.com/sanford1/FontGen/master/font01.png)
 
 TODO
 ====

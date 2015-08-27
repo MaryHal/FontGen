@@ -22,6 +22,10 @@ Example:
 
     font.draw(16.0f, 16.0f, L"Hello World あおいえう");
 
+Generated Bitmap:
+
+![Build Status][https://raw.githubusercontent.com/sanford1/FontGen/master/font01.png]
+
 TODO
 ====
 

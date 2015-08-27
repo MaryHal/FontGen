@@ -1,5 +1,6 @@
 #include <fontgen/OpenGLFont.hpp>
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
@@ -52,11 +53,23 @@ class Application
             }
 
             glfwWindowHint(GLFW_RESIZABLE, false);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+            // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
+
             window = glfwCreateWindow(640, 480,
                                       "BlockTracker",
                                       nullptr, nullptr);
 
             glfwMakeContextCurrent(window);
+
+            glewInit();
+
+            if (GLEW_VERSION_1_3)
+            {
+                std::cout << "Supported!" << std::endl;
+            }
         }
 
         void initOpenGL()
@@ -103,6 +116,14 @@ int main(int argc, char *argv[])
     };
 
     font.writeBitmap("font.png");
+    fgen::Text t = font.makeText(16.0f, 270.0f, L"Hello World!");
+
+    for (int i = 0; i < 20; i++)
+        std::cout << t.data.at(i) << std::endl;
+
+    std::cout << "VBO index: \t" << t.vbo << std::endl <<
+        "Element Count: \t" << t.data.size() << std::endl <<
+        "Data Size: \t" << sizeof(float) * t.data.size() << std::endl;
 
     bool running = true;
     while (!app.shouldWindowClose() && running)
@@ -115,6 +136,8 @@ int main(int argc, char *argv[])
         font.draw(16.0f, 150.0f, L"1234567890!@#$%^&*()");
         font.draw(16.0f, 190.0f, L"⇦⇨⇧⇩");
         font.draw(16.0f, 230.0f, L"←↑→↓");
+        font.draw(16.0f, 270.0f, t);
+
         app.swapBuffers();
         app.pollEvents();
     }

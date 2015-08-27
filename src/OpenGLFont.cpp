@@ -49,12 +49,100 @@ namespace fgen
     {
         makeOpenGLTexture();
     }
+
     OpenGLFont& OpenGLFont::operator=(OpenGLFont&& that)
     {
         Font::operator=(that);
         makeOpenGLTexture();
 
         return *this;
+    }
+
+    Text OpenGLFont:: makeText(float x, float y, const std::wstring& text)
+    {
+        Text t;
+
+        for (int c : text)
+        {
+            // Find correct range for character
+            const stbtt_pack_range* r = nullptr;
+            for (const stbtt_pack_range& range : ranges)
+            {
+                if (c >= range.first_unicode_char_in_range &&
+                    c <= range.first_unicode_char_in_range + range.num_chars_in_range)
+                {
+                    r = &range;
+
+                    stbtt_aligned_quad q;
+                    stbtt_GetPackedQuad(r->chardata_for_range,
+                                        bitmapWidth, bitmapHeight,
+                                        c - r->first_unicode_char_in_range,
+                                        &x, &y, &q,
+                                        1); //1=opengl & d3d10+,0=d3d9
+
+                    t.data.push_back(q.s0);
+                    t.data.push_back(q.t0);
+                    t.data.push_back(q.x0);
+                    t.data.push_back(q.y0);
+
+                    t.data.push_back(q.s1);
+                    t.data.push_back(q.t0);
+                    t.data.push_back(q.x1);
+                    t.data.push_back(q.y0);
+
+                    t.data.push_back(q.s1);
+                    t.data.push_back(q.t1);
+                    t.data.push_back(q.x1);
+                    t.data.push_back(q.y1);
+
+                    t.data.push_back(q.s0);
+                    t.data.push_back(q.t1);
+                    t.data.push_back(q.x0);
+                    t.data.push_back(q.y1);
+                    break;
+                }
+            }
+        }
+
+        glGenBuffers(1, &t.vbo);
+
+        glBindBuffer(GL_ARRAY_BUFFER, t.vbo);
+        glBufferData(GL_ARRAY_BUFFER,
+                     sizeof(float) * t.data.size(),
+                     t.data.data(),
+                     GL_STATIC_DRAW);
+
+        return t;
+    }
+
+    void OpenGLFont::draw(float x, float y, const Text& t)
+    {
+        glPushMatrix();
+        // glTranslatef(x, y, 0.0f);
+
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        glBindBuffer(GL_ARRAY_BUFFER, t.vbo);
+        {
+            glTexCoordPointer(2, GL_FLOAT, sizeof(float) * 2, (const void*)0);
+            glVertexPointer(2, GL_FLOAT, sizeof(float) * 2, (const void*)(sizeof(float) * 2));
+
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            glEnableClientState(GL_VERTEX_ARRAY);
+
+            glDrawArrays(GL_QUADS, 0, t.data.size() / 4);
+
+            glDisableClientState(GL_VERTEX_ARRAY);
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        }
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glDisable(GL_TEXTURE_2D);
+
+        glPopMatrix();
     }
 
     void OpenGLFont::draw(float x, float y, const std::wstring& text) const

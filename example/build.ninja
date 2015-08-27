@@ -1,13 +1,12 @@
 ninja_required_version = 1.3
 ar = ar
-cxx = clang++
-cxxflags = -Wall -Wextra -pedantic -pedantic-errors -std=c++11 -DNDEBUG -O3 $
-    -Wno-constexpr-not-const -Wno-unused-value -Wno-mismatched-tags $
-    -I../include -isystem../ext/stb
+cxx = g++
+cxxflags = -Wall -Wextra -pedantic -pedantic-errors -std=c++11 -g -O0 $
+    -DDEBUG -I../include -isystem../ext/stb
 ldflags = -lGLEW -lGL -lglfw
 
 rule bootstrap
-  command = python bootstrap.py --cxx=clang++
+  command = python bootstrap.py --debug
   generator = 1
 rule compile
   command = $cxx -MMD -MF $out.d -c $cxxflags $in -o $out

@@ -5,6 +5,13 @@
 
 namespace fgen
 {
+    struct Text
+    {
+        public:
+            unsigned int vbo;
+            std::vector<float> data;
+    };
+
     class OpenGLFont : public Font
     {
         private:
@@ -28,6 +35,9 @@ namespace fgen
             // Moving
             OpenGLFont(OpenGLFont&& that);
             OpenGLFont& operator=(OpenGLFont&& that);
+
+            Text makeText(float x, float y, const std::wstring& text);
+            void draw(float x, float y, const Text& t);
 
             void draw(float x, float y, const std::wstring& text) const;
             void drawChar(float& x, float& y, const wchar_t c) const;
